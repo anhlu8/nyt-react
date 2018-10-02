@@ -1,27 +1,20 @@
 import axios from "axios";
-const BASEURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?";
-const queryParams = {
-  "api-key": "b9f91d369ff59547cd47b931d8cbc56b:0:74623931"
-};
-queryParams.q = $("#search-term")
-  .val()
-  .trim();
-const startYear = $("#start-year")
-  .val()
-  .trim();
-if (parseInt(startYear)) {
-  queryParams.begin_date = startYear + "0101";
-}
-
-const endYear = $("#end-year")
-  .val()
-  .trim();
-if (parseInt(endYear)) {
-  queryParams.end_date = endYear + "0101";
-}
 
 export default {
-  search: function (query) {
-    return axios.get(BASEURL + $.param(query));
+  // Gets all Articles
+  getArticles: function() {
+    return axios.get("/api/Articles");
+  },
+  // Gets the Article with the given id
+  getArticlebyID: function(id) {
+    return axios.get("/api/Articles/" + id);
+  },
+  // Deletes the Article with the given id
+  deleteArticle: function(id) {
+    return axios.delete("/api/Articles/" + id);
+  },
+  // Saves a Article to the database
+  saveArticle: function(ArticleData) {
+    return axios.post("/api/Articles", ArticleData);
   }
 };

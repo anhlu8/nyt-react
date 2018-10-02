@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const articleRoutes = require("./articles");
+const articleRoutes = require("./nytRoutes.js");
+const nytRoutes = require("./nytRoutes.js");
 
-// article routes
+
 router.use("/articles", articleRoutes);
-// key route
-router.use("/key", (req, res) => {
-  res.json({apiKey: process.env.NYT_API});
-});
+router.use("/nyt", nytRoutes);
+
+
 
 module.exports = router;
