@@ -1,118 +1,70 @@
 import React, { Component } from "react";
-import DeleteBtn from "../../components/DeleteBtn";
-import Jumbotron from "../../components/Jumbotron";
-import API from "../../utils/API";
+import Jumbotron from "../components/Jumbotron";
+import API from "../utils/API";
 import { Link } from "react-router-dom";
-import { Col, Row, Container } from "../../components/Grid";
-import { List, ListItem } from "../../components/List";
-import { Input, TextArea, FormBtn } from "../../components/Form";
+import { Col, Row, Container } from "../components/Grid";
+import DeleteBtn from "../components/DeleteBtn";
 
-class Books extends Component {
+
+class SavedArticles extends Component {
   state = {
-    books: [],
-    title: "",
-    author: "",
-    synopsis: ""
+    articles:[]
   };
 
   componentDidMount() {
-    this.loadBooks();
-  }
+    this.loadArticles();
+  };
 
-  loadBooks = () => {
-    API.getBooks()
+  loadArticles = () => {
+    API.getArticles()
       .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
+        this.setState({articles: res.data})
       )
       .catch(err => console.log(err));
   };
 
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
+  deleteArticles = id => {
+    API.deleteArticle(id)
+      .then(res => this.loadArticles())
       .catch(err => console.log(err));
   };
 
-  handleInputChange = event => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value
-    });
-  };
-
-  handleFormSubmit = event => {
-    event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
-      })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
-    }
-  };
 
   render() {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
             <Jumbotron>
-              <h1>What Books Should I Read?</h1>
-            </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Title (required)"
-              />
-              <Input
-                value={this.state.author}
-                onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="Synopsis (Optional)"
-              />
-              <FormBtn
-                disabled={!(this.state.author && this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Book
-              </FormBtn>
-            </form>
-          </Col>
-          <Col size="md-6 sm-12">
-            <Jumbotron>
-              <h1>Books On My List</h1>
-            </Jumbotron>
-            {this.state.books.length ? (
-              <List>
-                {this.state.books.map(book => (
-                  <ListItem key={book._id}>
-                    <Link to={"/books/" + book._id}>
-                      <strong>
-                        {book.title} by {book.author}
-                      </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <h3>No Results to Display</h3>
-            )}
-          </Col>
+              <h1>What Article Should I Read?</h1>
+              </Jumbotron>
         </Row>
+        <Row>
+        <div className="list-group" >
+          {this.state.articles.length ? (
+           this.state.articles.map(article => (
+            <div className="list-group-item" key={article._id}>
+              <div className="row">
+                <h5 className="col-sm-8">{article.title}</h5>
+                <div className="col-sm-4 text-right">
+                  <a className="mr-5" href={article.url}>view</a>
+                  <DeleteBtn onClick={() => this.deleteArticles(article._id)} />
+                </div>
+              </div>
+              <div className="row ml-auto">
+                <p>{article.byline}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <h3>No Saved Articles Found</h3>
+        )
+        }
+        </div>
+        </Row>
+
       </Container>
     );
   }
 }
 
-export default Books;
+export default SavedArticles;
